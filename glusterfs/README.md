@@ -9,7 +9,8 @@ LVM cookbook -> for creation of LVM volumes via chef this cookbook is required a
 
 Attributes
 ----------
-default['glusterfs']['physical_volumes'] -> array of physical volumes to be used with LVM group creation
+default['glusterfs']['physical_volumes'] -> array of physical volumes to be used with LVM group creation. used by lvm recipe
+default['glusterfs']['brick_path'] -> specifies the mount point for the newly created lvm backed brick. used by lvm recipe
 
 Usage
 -----
