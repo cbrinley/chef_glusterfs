@@ -5,45 +5,99 @@ if [ $UID -ne 0 ]; then
 fi
 
 
-ROOT=$(pwd)
-LOGFILE="boostrap.log"
+ROOT=/root
+LOGFILE="$ROOT/boostrap.log"
 
-echo Starting boostrap.sh | awk '{ print "["strftime()"]", $0; fflush() }' >> $LOGFILE
-echo "Bootstrap chef install..." | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
-sleep .5
-clear
 
-echo "Checking for and installing ruby if required."
+####FUNCTIONS 
+function start_block(){
+  clear
+  cd $ROOT
+  echo $1 | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+}
+
+function log(){
+  echo $1 | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+}
+
+function end_block(){
+  echo '****[ SECTION COMPLETE ]****'
+  echo ""
+  echo ""
+}
+
+####LOGIC BLOCKS
+
+start_block "Starting boostrap.sh"
+
+
+
+start_block "Checking for and installing ruby if required."
 rpm -Uvh http://rbel.frameos.org/rbel6 | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 yum -y install ruby ruby-devel ruby-ri ruby-rdoc ruby-shadow gcc gcc-c++ automake autoconf make curl dmidecode | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
-clear
+end_block
 
 
-echo "Downloading and installing rubygems from source" | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+
+start_block "Downloading and installing rubygems from source"
+
 mkdir -p src/ruby/gems
 cd src/ruby/gems
 if [ ! -f rubygems-1.8.10.tgz ]; then
   curl -O http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 fi
-echo "Extracting source" | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
-tar xzf rubygems-1.8.10.tgz
+log "Extracting source"
+tar -xzf rubygems-1.8.10.tgz
 cd rubygems-1.8.10
 ruby setup.rb --no-format-executable | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 
-clear
-cd $ROOT
+end_block
 
-echo "Installing chef-solo" | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
-sudo gem install chef --no-ri --no-rdoc | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 
-clear
-echo "Installing git" | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+
+start_block "Installing chef-solo"
+gem install chef --no-ri --no-rdoc | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+end_block
+
+
+
+start_block "Installing git"
 yum -y install git | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+end_block
 
-clear
-echo "Setting up git repo for chef development."
+
+
+start_block "Setting up git repo for chef development."
+
 mkdir -p src/chef
 cd src/chef
-git clone https://github.com/cbrinley/chef_glusterfs.git
+if [ -d chef_glusterfs ]; then
+  cd chef_glusterfs
+  git pull | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+else
+  git clone https://github.com/cbrinley/chef_glusterfs.git | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+fi
 
-cd $ROOT
+end_block
+
+
+
+start_block "Copying chef cookbooks to system location."
+
+cd src/chef/chef_glusterfs
+mkdir -p /var/chef/cookbooks
+/usr/bin/cp -r * /var/chef/cookbooks/.
+
+end_block
+
+
+
+start_block "Setting up common rommand aliases"
+
+if [ ! -f .bash_profile ]; then
+  touch .bash_profile
+  chmod +x .bash_profile
+fi
+grep alias .bash_profile | grep cp > /dev/null
+
+end_block
