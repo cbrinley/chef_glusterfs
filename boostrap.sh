@@ -93,12 +93,3 @@ end_block
 
 
 
-start_block "Setting up common rommand aliases"
-
-if [ ! -f .bash_profile ]; then
-  touch .bash_profile
-  chmod +x .bash_profile
-fi
-grep alias .bash_profile | grep cp > /dev/null
-
-end_block

@@ -6,6 +6,10 @@
 #
 # All rights reserved - Do Not Redistribute
 
+log "Installing components for glusterFS and related dependencies of other recpipies in this cookbook."
+
+
+log "GlusterFS Core components"
 cookbook_file "/etc/yum.repos.d/glusterfs.repo" do
   source "glusterfs.repo"
   mode 00644
@@ -58,3 +62,16 @@ yum_package "glusterfs-swift-proxy" do
 end
 
 
+
+log "Gems and chef components related to LVM storage configuration"
+gem_package "di-ruby-lvm" do
+  action :install
+end
+
+gem_package "di-ruby-lvm-attrib" do
+  action :install
+end
+
+git "/root/src/chef" do
+  repository "https://github.com/opscode-cookbooks/lvm.git"
+end
