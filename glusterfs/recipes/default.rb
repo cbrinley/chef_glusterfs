@@ -72,7 +72,7 @@ gem_package "di-ruby-lvm-attrib" do
   action :install
 end
 
-git "/root/src/chef" do
+git "/root/src/chef/lvm" do
   repository "https://github.com/opscode-cookbooks/lvm.git"
   action :checkout
   reference "master"
