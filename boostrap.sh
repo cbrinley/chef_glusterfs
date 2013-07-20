@@ -49,6 +49,7 @@ fi
 log "Extracting source"
 tar -xzf rubygems-1.8.10.tgz
 cd rubygems-1.8.10
+log "Building ruby gems"
 ruby setup.rb --no-format-executable | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 
 end_block
