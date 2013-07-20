@@ -74,6 +74,4 @@ end
 
 git "/root/src/chef/lvm" do
   repository "https://github.com/opscode-cookbooks/lvm.git"
-  action :checkout
-  reference "master"
 end
