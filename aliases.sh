@@ -5,4 +5,4 @@ function upcb(){
   echo "cookbooks updated"
 }
 
-alias solo=chef-solo
+alias solo="chef-solo -o"
