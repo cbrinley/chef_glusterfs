@@ -5,10 +5,11 @@ Installs 3.3.2 gluster for centos 6.
 Requirements
 ------------
 Centos 6, the need for 3.3.2
+LVM cookbook -> for creation of LVM volumes via chef this cookbook is required and associated gems: https://github.com/opscode-cookbooks/lvm
 
 Attributes
 ----------
-None currently
+default['glusterfs']['physical_volumes'] -> array of physical volumes to be used with LVM group creation
 
 Usage
 -----
