@@ -86,7 +86,7 @@ start_block "Copying chef cookbooks to system location."
 
 cd src/chef/chef_glusterfs
 mkdir -p /var/chef/cookbooks
-/usr/bin/cp -r * /var/chef/cookbooks/.
+/bin/cp -r * /var/chef/cookbooks/.
 
 end_block
 
