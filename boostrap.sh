@@ -92,4 +92,7 @@ mkdir -p /var/chef/cookbooks
 end_block
 
 
+start_block "Setting SELinux to permissive"
+setenforce 0
+endo_block
 
