@@ -13,7 +13,7 @@ function main(){
 
   ####MAIN LOGIC BLOCKS
 
-  log "Starting boostrap.sh"
+  log "Starting bootstrap.sh"
 
   start_block "Help Check"
   has_option h && show_help
@@ -64,7 +64,7 @@ function main(){
   install_chef_glusterfs
   end_block
 
-  start_block "Update Boostrap"
+  start_block "Update Bootstrap"
   has_option u && update_bootstrap
   end_block 
 
