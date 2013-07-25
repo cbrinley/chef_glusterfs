@@ -12,13 +12,10 @@ IGNORE_RET_CODE=0
 function main(){
 
   ####MAIN LOGIC BLOCKS
+  has_option h && (show_help && exit)  
+  has_option s && no_output
 
   log "Starting bootstrap.sh"
-
-  start_block "Help Check"
-  has_option h && show_help
-  end_block
-
 
   start_block "Init Checks"
   user_check
@@ -101,6 +98,10 @@ function start_block(){
 
 function log(){
   echo $1 | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
+}
+
+function no_output(){
+  exec >&-
 }
 
 function set_exit(){
@@ -291,7 +292,8 @@ function show_help(){
     -h this Help
     -u update this script. will take effect on next run. script exits after update.
     -b only run bootstrap code. do not run chef recipes.
-    
+    -s silent. no log messages are sent to screen.
+
 EOF
 }
 #ACTUAL EXECUTION
