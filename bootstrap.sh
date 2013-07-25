@@ -2,6 +2,10 @@
 
 ROOT=/root
 LOGFILE="$ROOT/bootstrap.log"
+SCRIPT_ARGS="$@"
+EXIT_SCRIPT=0
+SCRIPT_PATH=$0
+
 
 
 function main(){
@@ -10,10 +14,16 @@ function main(){
 
   log "Starting boostrap.sh"
 
+  start_block "Help Check"
+  has_option h && show_help
+  end_block
+
+
   start_block "Init Checks"
   user_check
   check_point "user_check"
   end_block
+
 
   start_block "VIM Install"
   install_check "which vim" || yum_install vim
@@ -53,6 +63,10 @@ function main(){
   install_chef_glusterfs
   end_block
 
+  start_block "Update Boostrap"
+  has_option u && update_bootstrap
+  end_block 
+
 
   start_block "LVM Git Repo Install"
   install_chef_lvm
@@ -69,8 +83,7 @@ function main(){
   end_block
 
   start_block "Chef-Solo Run"
-  test "$1" == "-b"
-  install_check "test $? -eq 0" || run_chef_solo 
+  has_no_option b && run_chef_solo
   end_block
   
   log "Bootstrap.sh complete."
@@ -89,6 +102,20 @@ function log(){
   echo $1 | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 }
 
+function set_exit(){
+  EXIT_MSG="$1"
+  EXIT_SCRIPT=1
+}
+
+function unset_exit(){
+  EXIT_MSG=""
+  EXIT_SCRIPT=0
+}
+
+function check_exit(){
+  test EXIT_SCRIPT -ne 0 && return 0 || return 1
+}
+
 function check_point(){
   if [ $? -ne 0 ]; then
     log "BLOCK: [$CURRENT_BLOCK] failed at line: $1"
@@ -100,9 +127,15 @@ function end_block(){
   if [ $? -ne 0 ]; then
     log "error occurred in block $CURRENT_BLOCK , exiting...."
     exit 1
+  fi 
+  if [ check_exit -eq 0 ]; then
+    log " Exiting: $EXIT_MSG"
+    log "<-- [ BLOCK EXIT: ($CURRENT_BLOCK)]"
+    exit 0
+  else
+    log "<-- [ BLOCK COMPLETE ($CURRENT_BLOCK)]"
+    log ""
   fi
-  log "<-- [ BLOCK COMPLETE ($CURRENT_BLOCK)]"
-  log ""
 }
 
 function install_check(){
@@ -112,6 +145,26 @@ function install_check(){
    log "[$CURRENT_BLOCK] already complete. Skipping install steps."
   fi
   return $retcode
+}
+
+function has_option(){
+ local retcode=1
+  while getopts "$1" OPTION $SCRIPT_ARGS &>/dev/null
+  do
+    case $OPTION in
+      $1) retcode=0
+          break
+          ;;
+       ?) continue
+          ;;
+    esac
+  done
+  return $retcode
+}
+
+function has_no_option(){
+  has_option $1
+  test $? -eq 0 && return 1 || return 0
 }
 
 function user_check(){
@@ -145,6 +198,11 @@ function git_install(){
     log "Cloning GIT repo: $2"
     git clone $2 &>/dev/null
   fi
+}
+
+function update_bootstrap(){
+  /bin/cp $ROOT/src/chef/chef_glusterfs/bootstrap.sh $SCRIPT_PATH
+  set_exit "bootstrap.sh is up to date."
 }
 
 function rvm_install(){
@@ -205,5 +263,14 @@ function run_chef_solo(){
   chef-solo -o glusterfs,lvm,glusterfs::lvm
 }
 
+function show_help(){
+  set_exit "User requested help message."
+  cat <<EOF
+  Help: bootstrap.sh [options]
+    -h this Help
+    -u update this script. will take effect on next run. script exits after update.
+    -b only run bootstrap code. do not run chef recipes.
+EOF
+}
 #ACTUAL EXECUTION
 main $@
