@@ -101,7 +101,8 @@ function log(){
 }
 
 function no_output(){
-  exec >&-
+  exec 1>/dev/null
+  exec 2>/dev/null
 }
 
 function set_exit(){
