@@ -12,7 +12,7 @@ IGNORE_RET_CODE=0
 function main(){
 
   ####MAIN LOGIC BLOCKS
-  has_option h && (show_help && exit)  
+  has_option h && (show_help; exit)  
   has_option s && no_output
 
   log "Starting bootstrap.sh"
