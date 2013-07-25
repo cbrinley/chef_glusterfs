@@ -5,7 +5,7 @@ LOGFILE="$ROOT/bootstrap.log"
 SCRIPT_ARGS="$@"
 EXIT_SCRIPT=0
 SCRIPT_PATH=$0
-IGNORE_EXIT_CODE=0
+IGNORE_RET_CODE=0
 
 
 
@@ -117,16 +117,16 @@ function check_exit(){
   test $EXIT_SCRIPT -ne 0 && return 0 || return 1
 }
 
-function ignore_exit_code(){
-  IGNORE_EXIT_CODE=1
+function ignore_ret_code(){
+  IGNORE_RET_CODE=1
 }
 
-function clear_ignore_exit_code(){
-  IGNORE_EXIT_CODE=0
+function clear_ignore_ret_code(){
+  IGNORE_RET_CODE=0
 }
 
-function check_ignore_exit_code(){
-  test $IGNORE_EXIT_CODE -ne 0 && return 0 || return 1
+function check_ignore_ret_code(){
+  test $IGNORE_RET_CODE -ne 0 && return 0 || return 1
 }
 
 function check_point(){
@@ -138,16 +138,17 @@ function check_point(){
 
 function end_block(){
   if [ $? -ne 0 ]; then
-    check_ignore_exit_code && clear_ignore_exit_code
+    check_ignore_ret_code
     if [ $? -ne 0 ]; then
       log "error occurred in block $CURRENT_BLOCK , exiting...."
       exit 1
     fi
   fi 
+  clear_ignore_ret_code
   check_exit
   if [ $? -eq 0 ]; then
-    log " Exiting: $EXIT_MSG"
-    log "<-- [ BLOCK EXIT: ($CURRENT_BLOCK)]"
+    log "Exiting: $EXIT_MSG"
+    log "<-- [ BLOCK EXIT ($CURRENT_BLOCK)]"
     exit 0
   else
     log "<-- [ BLOCK COMPLETE ($CURRENT_BLOCK)]"
@@ -165,6 +166,7 @@ function install_check(){
 }
 
 function has_option(){
+ ignore_ret_code
  local retcode=1
   while getopts "$1" OPTION $SCRIPT_ARGS &>/dev/null
   do
