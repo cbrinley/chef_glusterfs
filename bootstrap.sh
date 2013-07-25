@@ -166,8 +166,9 @@ function install_check(){
 }
 
 function has_option(){
- ignore_ret_code
- local retcode=1
+  OPTIND=1
+  ignore_ret_code
+  local retcode=1
   while getopts "$1" OPTION $SCRIPT_ARGS &>/dev/null
   do
     case $OPTION in
