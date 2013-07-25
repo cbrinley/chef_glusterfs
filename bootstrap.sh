@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ROOT=/root
-LOGFILE="$ROOT/boostrap.log"
+LOGFILE="$ROOT/bootstrap.log"
 
 
 function main(){
