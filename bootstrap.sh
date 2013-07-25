@@ -286,10 +286,12 @@ function run_chef_solo(){
 function show_help(){
   set_exit "User requested help message."
   cat <<EOF
+
   Help: bootstrap.sh [options]
     -h this Help
     -u update this script. will take effect on next run. script exits after update.
     -b only run bootstrap code. do not run chef recipes.
+    
 EOF
 }
 #ACTUAL EXECUTION
