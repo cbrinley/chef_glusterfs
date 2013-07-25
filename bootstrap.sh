@@ -113,7 +113,7 @@ function unset_exit(){
 }
 
 function check_exit(){
-  test EXIT_SCRIPT -ne 0 && return 0 || return 1
+  test $EXIT_SCRIPT -ne 0 && return 0 || return 1
 }
 
 function check_point(){
