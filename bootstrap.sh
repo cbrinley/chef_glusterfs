@@ -128,7 +128,8 @@ function end_block(){
     log "error occurred in block $CURRENT_BLOCK , exiting...."
     exit 1
   fi 
-  if [ check_exit -eq 0 ]; then
+  check_exit
+  if [ $? -eq 0 ]; then
     log " Exiting: $EXIT_MSG"
     log "<-- [ BLOCK EXIT: ($CURRENT_BLOCK)]"
     exit 0
