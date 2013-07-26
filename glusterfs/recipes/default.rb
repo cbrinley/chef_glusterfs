@@ -61,6 +61,10 @@ yum_package "glusterfs-swift-proxy" do
   action :install
 end
 
+yum_package "xfsprogs" do
+  action :install
+end
+
 
 
 log "Gems and chef components related to LVM storage configuration"
