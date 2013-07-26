@@ -175,6 +175,7 @@ function has_option(){
   do
     case $OPTION in
       $1) retcode=0
+          clear_ignore_ret_code
           break
           ;;
        ?) continue
@@ -185,8 +186,20 @@ function has_option(){
 }
 
 function has_no_option(){
-  has_option $1
-  test $? -eq 0 && return 1 || return 0
+  OPTIND=1
+  local retcode=0
+  while getopts "$1" OPTION $SCRIPT_ARGS &>/dev/null
+  do
+    case $OPTION in
+      $1) retcode=1
+          ignore_ret_code
+          break
+          ;;
+       ?) continue
+          ;;
+    esac
+  done
+  return $retcode
 }
 
 function user_check(){
