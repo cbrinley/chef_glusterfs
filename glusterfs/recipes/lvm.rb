@@ -5,5 +5,7 @@ lvm_volume_group "gluster_vg000" do
         size '100%VG'
         filesystem 'xfs'
         mount_point :location => node.glusterfs.brick_path, :options => 'size=512'
+        action :create
   end
+  action :create
 end
