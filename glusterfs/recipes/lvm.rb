@@ -11,6 +11,7 @@ lvm_volume_group "gluster_vg000" do
 end
 
 directory node.glusterfs.brick_path do
+  recursive true
   action :create
 end
 
@@ -18,6 +19,5 @@ mount node.glusterfs.brick_path do
   fstype "xfs"
   options "size=512"
   device "/dev/mapper/gluster_vg000-glusterfs"
-  recursive true
   action [:mount, :enable]
 end
