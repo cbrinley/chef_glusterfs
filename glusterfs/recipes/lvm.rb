@@ -18,5 +18,6 @@ mount node.glusterfs.brick_path do
   fstype "xfs"
   options "size=512"
   device "/dev/mapper/gluster_vg000-glusterfs"
+  recursive true
   action [:mount, :enable]
 end
