@@ -1,4 +1,4 @@
-log default.glusterfs.physical_volumes
+puts default.glusterfs.physical_volumes
 =begin
 lvm_volume_group "gluster_vg000" do
   physical_volumes default.glusterfs.physical_volumes 
