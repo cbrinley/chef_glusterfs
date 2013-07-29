@@ -77,5 +77,5 @@ gem_package "di-ruby-lvm-attrib" do
 end
 
 git "/root/src/chef/lvm" do
-  repository "https://github.com/opscode-cookbooks/lvm.git"
+  repository "https://github.com/cbrinley/lvm.git"
 end
