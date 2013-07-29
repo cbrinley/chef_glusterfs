@@ -91,47 +91,86 @@ function main(){
 
 ####SUPPORTING FUNCTIONS 
 function start_block(){
+  #Doc:  Use start_block to being a logical processing and logging section.
+  #Arg1: Name of the logical block
+  #Ret:  Null
+  #
   log "--> [ BLOCK START ($1)]"
   cd $ROOT
   CURRENT_BLOCK="$1"
 }
 
 function log(){
+  #Doc:  Log statements to screen and disk.
+  #Arg1: Message to log
+  #Ret:  Null
+  #
   echo $1 | awk '{ print "["strftime()"]", $0; fflush() }' | tee -a $LOGFILE
 }
 
 function no_output(){
+  #Doc:  Nulls all output of this script. Including any subprocesses.
+  #Ret:  Null
+  #
   exec 1>/dev/null
   exec 2>/dev/null
 }
 
 function set_exit(){
+  #Doc:  Sets a flag that instructs the end_block statement to exit the script but without error.
+  #Arg1: A message that will be logged with the exit action.  
+  #Ret:  Null
+  #
   EXIT_MSG="$1"
   EXIT_SCRIPT=1
 }
 
 function clear_exit(){
+  #Doc: Clears the flag that may have been set by set_exit. Aka cancel any pending exit.
+  #Ret: Null
+  #
   EXIT_MSG=""
   EXIT_SCRIPT=0
 }
 
 function check_exit(){
+  #Doc: Check if exit flag is currently set
+  #Ret: Returns 0 if flag is set else 1.
   test $EXIT_SCRIPT -ne 0 && return 0 || return 1
 }
 
 function ignore_ret_code(){
+  #Doc: Some functions return a non-zero code to indicate a "no" answer to some state check. This does not mean failure.
+  #Doc: This function sets a flag that tells the end_block function to ignore any pending $? == 1. Only required if the
+  #Doc: last call before end_block may result in a non-zero ret code that does not indicate failure. It is responsibility
+  #Doc: of the funciton to decide if a ignore_ret_code is required. The calling code should not normally address this.
+  #Ret: Null
+  # 
   IGNORE_RET_CODE=1
 }
 
 function clear_ignore_ret_code(){
+  #Doc: Clears the flag set by ignore_ret_code
+  #Ret: Null
+  #
   IGNORE_RET_CODE=0
 }
 
 function check_ignore_ret_code(){
+  #Doc: Checks if the ignore_ret_code flag is set. Note this function its self may return 1 which should not be
+  #Doc: considered an error. Use with care near end_block calls.
+  #Ret: Returns 0 if set 1 if not set.
+  #
   test $IGNORE_RET_CODE -ne 0 && return 0 || return 1
 }
 
 function check_point(){
+  #Doc:  to be used after a call that may fail and for which continuation could lead to un-predictable state. When
+  #Doc:  called if the previous call exited with non-zero return code check_point will exit the script printing some
+  #Doc:  debug info about current block and a caller chosen message.
+  #Arg1: This arg should indicate where script failed. Usually use a string repr of the line that failed.
+  #Ret:  1 if $? was not 0. Also exits the script.
+  #
   if [ $? -ne 0 ]; then
     log "BLOCK: [$CURRENT_BLOCK] failed at line: $1"
     exit 1
