@@ -315,8 +315,8 @@ function install_chef_glusterfs(){
 
 function install_chef_lvm(){
   to_dir src/chef
-  git_install lvm https://github.com/opscode-cookbooks/lvm.git
-  check_point "git_install lvm https://github.com/opscode-cookbooks/lvm.git"
+  git_install lvm https://github.com/cbrinley/lvm.git
+  check_point "git_install lvm https://github.com/cbrinley/lvm.git"
 }
 
 function update_chef_system_cookbooks(){
