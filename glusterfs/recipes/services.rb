@@ -7,7 +7,7 @@ service "glusterd" do
 	if all_enabled and gfs_enabled
 		action [ :enable, :start ]
 	else	
-		action [ :enable, :stop ]
+		action [ :disable, :stop ]
 	end
 end
 
@@ -16,7 +16,7 @@ service "gluster-swift-account" do
 	if all_enabled and swf_enabled 
 		action [ :enable, :start ]
 	else	
-		action [ :enable, :stop ]
+		action [ :disable, :stop ]
 	end
 end
 
@@ -25,7 +25,7 @@ service "gluster-swift-container" do
 	if all_enabled and swf_enabled 
 		action [ :enable, :start ]
 	else	
-		action [ :enable, :stop ]
+		action [ :disable, :stop ]
 	end
 end
 
@@ -35,7 +35,7 @@ service "gluster-swift-object" do
 	if all_enabled and swf_enabled 
 		action [ :enable, :start ]
 	else	
-		action [ :enable, :stop ]
+		action [ :disable, :stop ]
 	end
 end
 
@@ -44,7 +44,7 @@ service "gluster-swift-proxy" do
 	if all_enabled and swf_enabled 
 		action [ :enable, :start ]
 	else	
-		action [ :enable, :stop ]
+		action [ :disable, :stop ]
 	end
 end
 
