@@ -80,8 +80,8 @@ function main(){
   install_check 'test `getenforce` == "Permissive"' || set_selinux_permissive
   end_block
 
-  start_block "Chef-Solo Run"
-  has_no_option b && run_chef_solo
+  start_block "Chef Run"
+  has_no_option b && recipes "glusterfs,lvm,glusterfs::lvm,glusterfs::services"
   end_block
   
   log "Bootstrap.sh complete."
@@ -333,8 +333,12 @@ function set_selinux_permissive(){
 }
 
 
-function run_chef_solo(){
-  chef-solo -o glusterfs,lvm,glusterfs::lvm
+function recipes(){
+  #Doc:  runs the provided chef recipes. Appropriate chef is chosen based on install.
+  #Arg1: the comma seperate list of chef recipes. See chef for syntax
+  #Ret:  Null
+  #
+  chef-solo -o $1
 }
 
 function show_help(){
