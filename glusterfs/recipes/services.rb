@@ -2,6 +2,15 @@ all_enabled = node.glusterfs.services.all.enabled
 gfs_enabled = node.glusterfs.services.gluster.enabled
 swf_enabled = node.glusterfs.services.swift.enabled
 
+
+log "Updating all service configuration files."
+cookbook_file "/etc/swift/swift.conf" do
+  source "swift.conf"
+  mode 00644
+end
+
+
+log "ensuring all services have correct run state."
 service "glusterd" do
 	supports :status => true, :restart => true, :reload => true
 	if all_enabled and gfs_enabled
