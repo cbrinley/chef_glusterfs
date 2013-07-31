@@ -30,65 +30,62 @@ def gluster_running
 end
 
 
-def mk_peer(peer_name)
-    mkpeer = Mixlib::ShellOut.new "gluster peer probe #{peer_name} 2>&1"
-    mkpeer.run_command
-    Chef::Log.info mkpeer.stdout
-    if mkpeer.exitstatus != 0 then return false end
-    return true
+def make_peer!
+    peer_name = new_resource.name
+    mk_cmd = Mixlib::ShellOut.new "gluster peer probe #{peer_name} 2>&1"
+    mk_cmd.run_command
+    Chef::Log.info mk_cmd.stdout
+    mk_cmd.error!
+    new_resource.updated_by_last_action(true)
 end
 
 
-def del_peer(peer_name)
-    delpeer = Mixlib::ShellOut.new "gluster peer detach #{peer_name} 2>&1"
-    delpeer.run_command
-    Chef:Log.info delpeer.stdout
-    if delpeer.exitstatus != 0 then return false end
+def delete_peer!
+    peer_name = new_resource.name
+    del_cmd = Mixlib::ShellOut.new "gluster peer detach #{peer_name} 2>&1"
+    del_cmd.run_command
+    Chef:Log.info del_cmd.stdout
+    del_cmd.error!
+    new_resource.updated_by_last_action(true)
+end
+
+
+def can_run?
+    if is_self(new_resource.name) then
+        Chef::Log.info "Cannot peer with self. Skipping peer #{new_resource.name}"
+        return false
+    end
+    if not gluster_running then
+        Chef::Log.info "Gluster not running peer #{new_resource.name} can not be created."  
+        return false
+    end
     return true
 end
 
 
 def do_create
-    if is_self(new_resource.name) then
-        Chef::Log.info "Cannot peer with self. Skipping peer #{new_resource.name}"
-        return true
-    end
-    if not gluster_running then
-        Chef::Log.info "Gluster not running peer #{new_resource.name} can not be created."  
-        return false
-    end
     if peer_exists new_resource.name then 
         Chef::Log.info "Gluster Peer #{new_resource.name} already exists - nothing to do."
-        return true
     else
-        return mkpeer new_resource.name
+        make_peer!
     end
 end
 
 
 def do_delete
-    if is_self(new_resource.name) then
-        Chef::Log.info "Cannot peer with self. Skipping peer #{new_resource.name}"
-        return true
-    end
-    if not gluster_running then
-        Chef::Log.info "Gluster not running peer #{new_resource.name} can not be created."  
-        return false
-    end
     if not peer_exists new_resource.name then 
         Chef::Log.info "Gluster Peer #{new_resource.name} does not exists - nothing to do."
-        return true
     else
-        return delpeer
+        delete_peer!
     end   
 end
 
 
 action :create do
-    do_create 
+    if can_run? then do_create end 
 end
 
 action :delete do 
-    do_delete
+    if can_run? then do_delete end
 end
 
