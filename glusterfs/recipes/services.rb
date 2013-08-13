@@ -34,6 +34,9 @@ cookbook_file "/etc/swift/object-server/1.conf" do
   mode 00644
 end
 
+log "generating ring file"
+/usr/bin/gluster-swift-gen-builders node.glusterfs.gluster_volume
+
 log "ensuring all services have correct run state."
 service "glusterd" do
 	supports :status => true, :restart => true, :reload => true
