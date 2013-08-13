@@ -9,6 +9,30 @@ cookbook_file "/etc/swift/swift.conf" do
   mode 00644
 end
 
+cookbook_file "/etc/swift/fs.conf" do
+  source "fs.conf"
+  mode 00644
+end
+
+cookbook_file "/etc/swift/proxy-server.conf" do
+  source "proxy-server.conf"
+  mode 00644
+end
+
+cookbook_file "/etc/swift/account-server/1.conf" do
+  source "account-server/1.conf"
+  mode 00644
+end
+
+cookbook_file "/etc/swift/container-server/1.conf" do
+  source "container-server/1.conf"
+  mode 00644
+end
+
+cookbook_file "/etc/swift/object-server/1.conf" do
+  source "object-server/1.conf"
+  mode 00644
+end
 
 log "ensuring all services have correct run state."
 service "glusterd" do
@@ -19,6 +43,16 @@ service "glusterd" do
 		action [ :disable, :stop ]
 	end
 end
+
+service "memcached" do
+	supports :status => true, :restart => true, :reload => true
+	if all_enabled and swf_enabled
+		action [ :enable, :start ]
+	else	
+		action [ :disable, :stop ]
+	end
+end
+
 
 service "gluster-swift-account" do
 	supports :status => true, :restart => true, :reload => false
