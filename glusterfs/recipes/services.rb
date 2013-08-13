@@ -36,6 +36,7 @@ end
 
 log "generating ring file"
 execute "swift builders" do
+  cwd "/etc/swift"
   command "/usr/bin/gluster-swift-gen-builders #{node.glusterfs.gluster_volume}"
 end
 
