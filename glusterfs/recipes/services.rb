@@ -35,7 +35,9 @@ cookbook_file "/etc/swift/object-server/1.conf" do
 end
 
 log "generating ring file"
-/usr/bin/gluster-swift-gen-builders node.glusterfs.gluster_volume
+execute "swift builders" do
+  command "/usr/bin/gluster-swift-gen-builders #{node.glusterfs.gluster_volume}"
+end
 
 log "ensuring all services have correct run state."
 service "glusterd" do
